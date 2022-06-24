@@ -10,12 +10,13 @@ import axios from 'axios'
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
 
-export default function App() {
+export default function App(props) {
   // ✨ MVP can be achieved with these states
   const [message, setMessage] = useState('')
   const [articles, setArticles] = useState([])
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
+
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
@@ -39,14 +40,16 @@ export default function App() {
     // to the Articles screen. Don't forget to turn off the spinner!
     axios.post(loginUrl, {username, password})
       .then(res => {
-        console.log(res)
-        //localStorage.setItem('token')
+        setMessage(res.data.message)
+        localStorage.setItem('token', res.data.token)
+        navigate("/articles")
       })
       .catch(err => {
-        setMessage(err.response.data.message)
+        setMessage(err.response.data.message)   
+        console.log(err)
       })
   }
-  console.log(message)
+ 
 
   const getArticles = () => {
     // ✨ implement

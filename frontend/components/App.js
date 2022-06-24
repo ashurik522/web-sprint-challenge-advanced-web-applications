@@ -69,10 +69,14 @@ export default function App(props) {
   }
 
   const postArticle = article => {
-    // ✨ implement
-    // The flow is very similar to the `getArticles` function.
-    // You'll know what to do! Use log statements or breakpoints
-    // to inspect the response from the server.
+    axiosWithAuth()
+      .post('/articles', article)
+      .then(res => {
+        setMessage(res.data.message)
+      })
+      .catch(err=> {
+        setMessage(err.response.data.message)
+      })
   }
 
   const updateArticle = ({ article_id, article }) => {
@@ -112,7 +116,6 @@ export default function App(props) {
                 articles={articles} 
                 setCurrentArticleId={setCurrentArticleId} 
                 deleteArticle={deleteArticle} 
-                redirectToLogin={redirectToLogin}
               />
             </>
           } />

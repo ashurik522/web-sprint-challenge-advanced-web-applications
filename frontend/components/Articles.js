@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import PT from 'prop-types'
 
 export default function Articles(props) {
-  const { getArticles, setCurrentArticleId, articles, deleteArticle, redirectToLogin } = props;
+  const { getArticles, setCurrentArticleId, articles, deleteArticle } = props;
+  
   const navigate=useNavigate()
 
   useEffect(() => {

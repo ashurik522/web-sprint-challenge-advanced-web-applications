@@ -2,18 +2,26 @@ import React, { useEffect, useState } from 'react'
 import PT from 'prop-types'
 import { axiosWithAuth } from '../axios'
 
+
 const initialFormValues = { title: '', text: '', topic: '' }
 
 export default function ArticleForm(props) {
-  const [values, setValues] = useState(initialFormValues)
-  const { postArticle, setCurrentArticleId, updateArticle } = props
 
+  const [values, setValues] = useState(initialFormValues)
+  const { postArticle, setCurrentArticleId, updateArticle, currentArticle } = props
+  
+    
   useEffect(() => {
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
-  })
+    if(currentArticle) {
+      setValues(currentArticle)
+    } else {
+      setValues(initialFormValues)
+    }
+  },[currentArticle])
 
   const onChange = evt => {
     const { id, value } = evt.target
@@ -23,14 +31,26 @@ export default function ArticleForm(props) {
   
   const onSubmit = evt => {
     evt.preventDefault()
-    postArticle(values)
-    setValues(initialFormValues)
+    if(!currentArticle){
+      postArticle(values)
+      setValues(initialFormValues)
+    } else {
+      const article_id = values.article_id
+      const article = {...values}
+      updateArticle({article_id, article})
+      setCurrentArticleId(null)
+    }
+    
   }
 
   const isDisabled = () => {
-    if(values.title.length < 1 || values.text.length < 1){
+    if(values.title.trim(" ").length < 1 || values.text.trim(" ").length < 1){
       return true
     } 
+  }
+
+  const cancelEditClick = () => {
+    setValues(initialFormValues)
   }
 
   return (
@@ -60,7 +80,7 @@ export default function ArticleForm(props) {
       </select>
       <div className="button-group">
         <button disabled={isDisabled()} id="submitArticle">Submit</button>
-        <button onClick={Function.prototype}>Cancel edit</button>
+        <button onClick={cancelEditClick}>Cancel edit</button>
       </div>
     </form>
   )

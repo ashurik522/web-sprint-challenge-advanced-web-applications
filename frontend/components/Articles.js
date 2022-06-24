@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import PT from 'prop-types'
 
 export default function Articles(props) {
-  const { getArticles, setCurrentArticleId, articles, deleteArticle } = props;
-  
+  const { getArticles, setCurrentArticleId, deleteArticle, currentArticleId, updateArticle, articles } = props;
+
   const navigate=useNavigate()
 
   useEffect(() => {
@@ -13,6 +13,7 @@ export default function Articles(props) {
     }
     getArticles()
   },[])
+
 
   return (
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
@@ -31,8 +32,8 @@ export default function Articles(props) {
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={true} onClick={Function.prototype}>Edit</button>
-                  <button disabled={true} onClick={Function.prototype}>Delete</button>
+                  <button disabled={currentArticleId ? true : false} onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
+                  <button disabled={currentArticleId ? true : false} onClick={() => deleteArticle(art.article_id)}>Delete</button>
                 </div>
               </div>
             )

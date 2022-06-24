@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink, Routes, Route, useNavigate } from 'react-router-dom'
+import { NavLink, Routes, Route, useNavigate, useParams } from 'react-router-dom'
 import Articles from './Articles'
 import LoginForm from './LoginForm'
 import Message from './Message'
@@ -20,7 +20,6 @@ export default function App(props) {
   const [spinnerOn, setSpinnerOn] = useState(false)
   
 
-
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
   const redirectToLogin = () => {navigate("/")}
@@ -37,12 +36,13 @@ export default function App(props) {
   }
  
   const login = ({ username, password }) => {
-    
+
+    setSpinnerOn(true)
     axios.post(loginUrl, {username, password})
       .then(res => {
         localStorage.setItem('token', res.data.token)
         setMessage(res.data.message)
-        setSpinnerOn(true)
+        setSpinnerOn(false)
         redirectToArticles()
       })
       .catch(err => {
@@ -52,7 +52,7 @@ export default function App(props) {
 
  
   const getArticles = () => {
-
+    setSpinnerOn(true)
     axiosWithAuth()
       .get('/articles')
       .then(res =>{
@@ -69,10 +69,12 @@ export default function App(props) {
   }
 
   const postArticle = article => {
+    setSpinnerOn(true)
     axiosWithAuth()
       .post('/articles', article)
       .then(res => {
         setMessage(res.data.message)
+        setSpinnerOn(false)
       })
       .catch(err=> {
         setMessage(err.response.data.message)
@@ -80,18 +82,42 @@ export default function App(props) {
   }
 
   const updateArticle = ({ article_id, article }) => {
-    // ✨ implement
-    // You got this!
+    setSpinnerOn(true)
+    axiosWithAuth()
+      .put(`/articles/${article_id}`, article)
+      .then(res => {
+        setArticles(articles.map(art=>{
+          if(art.article_id === currentArticleId){
+            return res.data.article
+          } else {
+            return art
+          }
+        }))
+        setSpinnerOn(false)
+        setMessage(res.data.message)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   const deleteArticle = article_id => {
-    // ✨ implement
+    setSpinnerOn(true)
+    axiosWithAuth()
+      .delete(`/articles/${article_id}`)
+        .then(res => {
+          setSpinnerOn(false)
+          setMessage(res.data.message)
+        })
+        .catch(err => {
+          console.log(err)
+        })
   }
+
 
 
 
   return (
-    // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
       <Spinner on={spinnerOn}/>
       <Message message={message} />
@@ -110,12 +136,15 @@ export default function App(props) {
                 postArticle={postArticle} 
                 updateArticle={updateArticle} 
                 setCurrentArticleId={setCurrentArticleId} 
+                currentArticle={articles.find(elem=> elem.article_id === currentArticleId)}
               />
               <Articles 
                 getArticles={getArticles} 
-                articles={articles} 
                 setCurrentArticleId={setCurrentArticleId} 
                 deleteArticle={deleteArticle} 
+                currentArticleId={currentArticleId}
+                updateArticle={updateArticle}
+                articles={articles}
               />
             </>
           } />

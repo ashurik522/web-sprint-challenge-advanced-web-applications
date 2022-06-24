@@ -16,8 +16,10 @@
     "@babel/plugin-transform-runtime": "7.18.2",
     "@babel/preset-env": "7.18.2",
     "@babel/preset-react": "7.17.12",
+    "@testing-library/dom": "^8.14.0",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "13.3.0",
+    "@testing-library/user-event": "^14.2.1",
     "@types/jest": "28.1.1",
     "babel-loader": "8.2.5",
     "babel-plugin-styled-components": "2.0.7",
@@ -50,6 +52,7 @@
     "react-router-dom": "6.3.0",
     "redux": "4.2.0",
     "styled-components": "5.3.5",
+    "user-event": "^4.0.0",
     "yup": "0.32.11"
   },
   "engines": {

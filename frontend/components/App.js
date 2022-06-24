@@ -18,7 +18,7 @@ export default function App(props) {
   const [articles, setArticles] = useState([])
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
-  const [loading, setLoading] = useState(false)
+  
 
 
   // ✨ Research `useNavigate` in React Router v.6
@@ -46,7 +46,6 @@ export default function App(props) {
 
 
   const login = ({ username, password }) => {
-
     axios.post(loginUrl, {username, password})
       .then(res => {
         setMessage(res.data.message)
@@ -60,7 +59,6 @@ export default function App(props) {
       })
   }
  
-
   const getArticles = () => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
@@ -70,6 +68,18 @@ export default function App(props) {
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
+    axiosWithAuth()
+      .get('/articles')
+      .then(res =>{
+        setMessage(res.data.message)
+        setSpinnerOn(true)
+        setArticles(res.data.articles)
+      })
+      .catch(err => {
+        if(err){
+          redirectToLogin()
+        }
+      })
   }
 
   const postArticle = article => {
@@ -106,8 +116,18 @@ export default function App(props) {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm />
-              <Articles />
+              <ArticleForm 
+                postArticle={postArticle} 
+                updateArticle={updateArticle} 
+                setCurrentArticleId={setCurrentArticleId} 
+              />
+              <Articles 
+                getArticles={getArticles} 
+                articles={articles} 
+                setCurrentArticleId={setCurrentArticleId} 
+                deleteArticle={deleteArticle} 
+                redirectToLogin={redirectToLogin}
+              />
             </>
           } />
         </Routes>

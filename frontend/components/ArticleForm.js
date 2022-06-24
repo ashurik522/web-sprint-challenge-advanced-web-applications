@@ -8,14 +8,16 @@ const initialFormValues = { title: '', text: '', topic: '' }
 export default function ArticleForm(props) {
 
   const [values, setValues] = useState(initialFormValues)
-  const { postArticle, setCurrentArticleId, updateArticle, currentArticle } = props
+  const { postArticle, setCurrentArticleId, updateArticle, currentArticle  } = props
   
     
   useEffect(() => {
+
     // ✨ implement
     // Every time the `currentArticle` prop changes, we should check it for truthiness:
     // if it's truthy, we should set its title, text and topic into the corresponding
     // values of the form. If it's not, we should reset the form back to initial values.
+
     if(currentArticle) {
       setValues(currentArticle)
     } else {
@@ -49,15 +51,12 @@ export default function ArticleForm(props) {
     } 
   }
 
-  const cancelEditClick = () => {
-    setValues(initialFormValues)
-  }
 
   return (
     // ✨ fix the JSX: make the heading display either "Edit" or "Create"
     // and replace Function.prototype with the correct function
     <form id="form" onSubmit={onSubmit}>
-      <h2>Create Article</h2>
+      <h2>{!currentArticle ? 'Create Article' : ' Edit Article'}</h2>
       <input
         maxLength={50}
         onChange={onChange}
@@ -80,7 +79,7 @@ export default function ArticleForm(props) {
       </select>
       <div className="button-group">
         <button disabled={isDisabled()} id="submitArticle">Submit</button>
-        <button onClick={cancelEditClick}>Cancel edit</button>
+        <button onClick={() => setCurrentArticleId(null)}>Cancel edit</button>
       </div>
     </form>
   )

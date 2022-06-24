@@ -73,6 +73,7 @@ export default function App(props) {
     axiosWithAuth()
       .post('/articles', article)
       .then(res => {
+        setArticles(articles.concat(res.data.article))
         setMessage(res.data.message)
         setSpinnerOn(false)
       })
@@ -106,6 +107,7 @@ export default function App(props) {
     axiosWithAuth()
       .delete(`/articles/${article_id}`)
         .then(res => {
+          setArticles(articles.filter(art => art.article_id !== article_id))
           setSpinnerOn(false)
           setMessage(res.data.message)
         })
@@ -137,6 +139,7 @@ export default function App(props) {
                 updateArticle={updateArticle} 
                 setCurrentArticleId={setCurrentArticleId} 
                 currentArticle={articles.find(elem=> elem.article_id === currentArticleId)}
+                currentArticleId={currentArticleId}
               />
               <Articles 
                 getArticles={getArticles} 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink, Routes, Route, useNavigate } from 'react-router-dom'
 import Articles from './Articles'
 import LoginForm from './LoginForm'
@@ -6,6 +6,7 @@ import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner'
 import axios from 'axios'
+
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -16,6 +17,7 @@ export default function App(props) {
   const [articles, setArticles] = useState([])
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
+  const [loading, setLoading] = useState(false)
 
 
   // ✨ Research `useNavigate` in React Router v.6
@@ -30,6 +32,15 @@ export default function App(props) {
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
   }
+ 
+  useEffect(()=>{
+    if(spinnerOn){
+      setTimeout(() => {
+        setSpinnerOn(false)
+      }, 1000);
+    }
+  }, [spinnerOn])
+
 
   const login = ({ username, password }) => {
     // ✨ implement
@@ -38,9 +49,12 @@ export default function App(props) {
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
+  
+
     axios.post(loginUrl, {username, password})
       .then(res => {
         setMessage(res.data.message)
+        setSpinnerOn(true)
         localStorage.setItem('token', res.data.token)
         navigate("/articles")
       })
@@ -78,10 +92,12 @@ export default function App(props) {
     // ✨ implement
   }
 
+
+
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner />
+      <Spinner on={spinnerOn}/>
       <Message message={message} />
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}

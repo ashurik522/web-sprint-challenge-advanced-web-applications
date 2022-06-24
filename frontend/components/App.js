@@ -36,48 +36,34 @@ export default function App(props) {
     }
   }
  
-  useEffect(()=>{
-    if(spinnerOn){
-      setTimeout(() => {
-        setSpinnerOn(false)
-      }, 1000);
-    }
-  }, [spinnerOn])
-
-
   const login = ({ username, password }) => {
+    
     axios.post(loginUrl, {username, password})
       .then(res => {
+        localStorage.setItem('token', res.data.token)
         setMessage(res.data.message)
         setSpinnerOn(true)
-        localStorage.setItem('token', res.data.token)
         redirectToArticles()
       })
       .catch(err => {
-        setMessage(err.response.data.message)   
-        console.log(err)
+        setMessage(err.response.data.message)    
       })
   }
+
  
   const getArticles = () => {
-    // ✨ implement
-    // We should flush the message state, turn on the spinner
-    // and launch an authenticated request to the proper endpoint.
-    // On success, we should set the articles in their proper state and
-    // put the server success message in its proper state.
-    // If something goes wrong, check the status of the response:
-    // if it's a 401 the token might have gone bad, and we should redirect to login.
-    // Don't forget to turn off the spinner!
+
     axiosWithAuth()
       .get('/articles')
       .then(res =>{
         setMessage(res.data.message)
-        setSpinnerOn(true)
+        setSpinnerOn(false)
         setArticles(res.data.articles)
       })
       .catch(err => {
         if(err){
           redirectToLogin()
+          setMessage(err.response.data.message)
         }
       })
   }
